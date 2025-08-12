@@ -6,6 +6,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Middleware for logging API requests
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -39,35 +40,31 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
 
+  // Error handler
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
-
     res.status(status).json({ message });
     throw err;
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
+  // Only setup Vite in development
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
     serveStatic(app);
   }
 
-  // In development pick a random available port (0). In production prefer PORT env or fallback 5000.
-  const port = app.get("env") === "development" ? 0 : (Number(process.env.PORT) || 5000);
-  
-  // Bind to 0.0.0.0 for production (external access) and 127.0.0.1 for development (localhost only)
-  const host = app.get("env") === "development" ? "127.0.0.1" : "0.0.0.0";
-  
-  server.listen({
-    port,
-    host,
-  }, () => {
+  // Proper host/port handling
+  const port = process.env.PORT ? Number(process.env.PORT) : 5000;
+  const host = process.env.PORT ? "0.0.0.0" : "127.0.0.1";
+
+  server.listen(port, host, () => {
     const addressInfo = server.address();
-    const actualPort = typeof addressInfo === 'object' && addressInfo ? addressInfo.port : port;
-    log(`serving on port ${actualPort} on ${host}`);
+    const actualPort =
+      typeof addressInfo === "object" && addressInfo
+        ? addressInfo.port
+        : port;
+    log(`✅ Server running on http://${host}:${actualPort}`);
   });
 })();
