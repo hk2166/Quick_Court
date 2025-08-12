@@ -16,7 +16,6 @@ export default defineConfig({
         ]
       : []),
   ],
-  // Ensure Vite loads environment variables from the repo root where .env resides
   envDir: path.resolve(import.meta.dirname),
   resolve: {
     alias: {
@@ -30,4 +29,8 @@ export default defineConfig({
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
   },
+  server: {
+    allowedHosts: 'all', // ✅ Allow all hosts, removes block request
+  }
 });
+
