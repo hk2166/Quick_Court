@@ -287,19 +287,19 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 page-transition">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        <p className="text-gray-600 mt-2">Platform overview and system monitoring</p>
+        <h1 className="text-3xl font-bold text-gray-900 slide-in-left">Admin Dashboard</h1>
+        <p className="text-gray-600 mt-2 slide-in-left stagger-1">Platform overview and system monitoring</p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => {
+        {stats.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.title} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div key={stat.title} className={`bg-white rounded-xl p-6 shadow-sm border border-gray-100 card-hover slide-in-up stagger-${index + 1}`}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">{stat.title}</p>
@@ -374,25 +374,25 @@ export default function AdminDashboard() {
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 mt-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 mt-6 card-hover slide-in-right">
             <div className="p-6 border-b border-gray-100">
               <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
             </div>
             <div className="p-6">
               <div className="space-y-3">
-                <button className="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200">
+                <button className="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200 hover-lift ripple">
                   <div className="flex items-center space-x-3">
                     <CheckCircle className="h-5 w-5 text-green-600" />
                     <span className="text-sm font-medium">Approve Facilities</span>
                   </div>
                 </button>
-                <button className="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200">
+                <button className="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200 hover-lift ripple">
                   <div className="flex items-center space-x-3">
                     <Users className="h-5 w-5 text-blue-600" />
                     <span className="text-sm font-medium">Manage Users</span>
                   </div>
                 </button>
-                <button className="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200">
+                <button className="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200 hover-lift ripple">
                   <div className="flex items-center space-x-3">
                     <AlertTriangle className="h-5 w-5 text-yellow-600" />
                     <span className="text-sm font-medium">Review Reports</span>

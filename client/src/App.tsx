@@ -16,6 +16,7 @@ import CustomerDashboard from './pages/user/CustomerDashboard';
 import SimpleTestDashboard from './pages/user/SimpleTestDashboard';
 import SimpleCustomerDashboard from './pages/user/SimpleCustomerDashboard';
 import AboutUsPage from './pages/AboutUsPage';
+import AICoachPage from './pages/AICoachPage';
 
 // Placeholder components for other pages
 import BookingPage from './pages/user/BookingPage';
@@ -90,6 +91,7 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/about" element={<AboutUsPage />} />
+            <Route path="/ai-coach" element={<AICoachPage />} />
 
             {/* Facility Owner Routes */}
             <Route path="/owner/dashboard" element={

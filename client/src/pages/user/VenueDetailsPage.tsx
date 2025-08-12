@@ -64,12 +64,12 @@ export default function VenueDetailsPage() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 page-transition">
       {/* Header */}
       <div className="flex items-center justify-between">
         <Link 
           to="/venues"
-          className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+          className="flex items-center text-gray-600 hover:text-gray-900 transition-colors hover-lift"
         >
           <ChevronLeft className="h-5 w-5 mr-1" />
           Back to venues
@@ -77,11 +77,12 @@ export default function VenueDetailsPage() {
       </div>
 
       {/* Image Gallery */}
-      <div className="relative h-96 md:h-[500px] rounded-2xl overflow-hidden">
+      <div className="relative h-96 md:h-[500px] rounded-2xl overflow-hidden hover-lift">
         <img
           src={venue.photos[currentImageIndex]}
           alt={`${venue.name} - Image ${currentImageIndex + 1}`}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover fade-in"
+          key={currentImageIndex}
         />
         
         {/* Image Navigation */}
@@ -89,13 +90,13 @@ export default function VenueDetailsPage() {
           <>
             <button
               onClick={prevImage}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors ripple"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
             <button
               onClick={nextImage}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors ripple"
             >
               <ChevronRight className="h-5 w-5" />
             </button>

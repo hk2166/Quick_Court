@@ -102,10 +102,10 @@ export default function CustomerDashboard() {
               
               // Calculate stats from actual bookings
               const totalBookings = mappedBookings.length;
-              const activeBookings = mappedBookings.filter(b => b.status === 'approved' || b.status === 'pending').length;
+              const activeBookings = mappedBookings.filter(b => b.status === 'confirmed' || b.status === 'pending').length;
               const completedBookings = mappedBookings.filter(b => b.status === 'completed').length;
               const totalSpent = mappedBookings
-                .filter(b => b.status === 'approved' || b.status === 'completed')
+                .filter(b => b.status === 'confirmed' || b.status === 'completed')
                 .reduce((sum, b) => sum + b.price, 0);
               
               setStats({
@@ -314,27 +314,27 @@ export default function CustomerDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 page-transition">
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-8">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="slide-in-left">
                 <h1 className="text-3xl font-bold text-gray-900">Welcome back, {user?.fullName || 'Customer'}!</h1>
                 <p className="text-gray-600 mt-2">Here's what's happening with your sports activities</p>
               </div>
               <div className="flex space-x-3">
                 <Link
                   to="/venues"
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+                  className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors hover-lift ripple"
                 >
                   <Search className="h-4 w-4 mr-2" />
                   Browse Venues
                 </Link>
                 <Link
                   to="/bookings/new"
-                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors hover-lift ripple pulse-effect"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   New Booking
@@ -348,7 +348,7 @@ export default function CustomerDashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 card-hover slide-in-up stagger-1">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Facilities</p>
@@ -360,7 +360,7 @@ export default function CustomerDashboard() {
             </div>
           </div>
           
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 card-hover slide-in-up stagger-2">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Active Facilities</p>
@@ -372,7 +372,7 @@ export default function CustomerDashboard() {
             </div>
           </div>
           
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 card-hover slide-in-up stagger-3">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Available Now</p>
@@ -384,7 +384,7 @@ export default function CustomerDashboard() {
             </div>
           </div>
           
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 card-hover slide-in-up stagger-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Nearby Courts</p>
