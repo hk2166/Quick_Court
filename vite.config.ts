@@ -16,7 +16,7 @@ export default defineConfig({
         ]
       : []),
   ],
-  envDir: '../',
+  envDir: "../",
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
@@ -30,7 +30,14 @@ export default defineConfig({
     emptyOutDir: true,
   },
   server: {
-    allowedHosts: 'all', // ✅ Allow all hosts, removes block request
-  }
+    allowedHosts: process.env.NODE_ENV === "production" 
+      ? true // Disable host checking in production
+      : [
+          "quick-court-5.onrender.com",
+          ".onrender.com", // Allow all Render subdomains
+          "localhost",
+          "127.0.0.1"
+        ],
+    host: true, // Allow external connections
+  },
 });
-
