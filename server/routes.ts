@@ -1,6 +1,5 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
 import { mockFacilities, mockCourts, mockBookings } from "../client/src/data/mockData";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -55,6 +54,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } as any;
     bookings.push(booking);
     res.status(201).json(booking);
+  });
+
+  // Simple in-memory user profiles to satisfy client profile API usage
+  type ProfileData = {
+    fullName?: string;
+    phone?: string;
+    address?: string;
+    businessName?: string;
+    businessAddress?: string;
+  };
+
+  const profiles = new Map<string, ProfileData>();
+
+  // Helper to ensure a profile exists with sensible defaults
+  function ensureProfile(userId: string): ProfileData {
+    if (!profiles.has(userId)) {
+      profiles.set(userId, {
+        fullName: `User ${userId}`,
+        phone: '',
+        address: '',
+        businessName: '',
+        businessAddress: '',
+      });
+    }
+    // non-null assertion is safe because we just set it if missing
+    return profiles.get(userId)!;
+  }
+
+  // GET user profile
+  app.get('/api/profile/:userId', (req: Request, res: Response) => {
+    const { userId } = req.params;
+    const profile = ensureProfile(userId);
+    res.json({ userId, ...profile });
+  });
+
+  // PUT user profile (replace)
+  app.put('/api/profile/:userId', (req: Request, res: Response) => {
+    const { userId } = req.params;
+    const body = (req.body || {}) as ProfileData;
+    const next: ProfileData = {
+      fullName: body.fullName ?? '',
+      phone: body.phone ?? '',
+      address: body.address ?? '',
+      businessName: body.businessName ?? '',
+      businessAddress: body.businessAddress ?? '',
+    };
+    profiles.set(userId, next);
+    res.json({ userId, ...next });
+  });
+
+  // PATCH user profile (partial update)
+  app.patch('/api/profile/:userId', (req: Request, res: Response) => {
+    const { userId } = req.params;
+    const existing = ensureProfile(userId);
+    const update = (req.body || {}) as ProfileData;
+    const merged: ProfileData = { ...existing, ...update };
+    profiles.set(userId, merged);
+    res.json({ userId, ...merged });
   });
 
   const httpServer = createServer(app);
