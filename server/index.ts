@@ -57,7 +57,10 @@ app.use((req, res, next) => {
 
   // Proper host/port handling
   const port = process.env.PORT ? Number(process.env.PORT) : 5000;
-  const host = process.env.PORT ? "0.0.0.0" : "127.0.0.1";
+  // Prefer explicit HOST env, otherwise:
+  // - bind 0.0.0.0 when PORT is provided (typical in deployments)
+  // - bind localhost during local development to avoid 127.0.0.1-specific issues
+  const host = process.env.HOST ?? (process.env.PORT ? "0.0.0.0" : "localhost");
 
   server.listen(port, host, () => {
     const addressInfo = server.address();

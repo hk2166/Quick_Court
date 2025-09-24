@@ -1,7 +1,23 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+// Load environment variables (Vite). Validate to prevent silent runtime failures.
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  const missing = [
+    !supabaseUrl ? 'VITE_SUPABASE_URL' : null,
+    !supabaseAnonKey ? 'VITE_SUPABASE_ANON_KEY' : null,
+  ].filter(Boolean).join(', ')
+  throw new Error(
+    `Missing required environment variable(s): ${missing}. ` +
+    'Place a .env file at the envDir configured by vite.config.ts (envDir: "../"), ' +
+    'which means it should live at the project root: q2/.env. Ensure variables are prefixed with VITE_.\n' +
+    'Example:\n' +
+    'VITE_SUPABASE_URL=https://YOUR-PROJECT.supabase.co\n' +
+    'VITE_SUPABASE_ANON_KEY=ey...\n'
+  )
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
@@ -627,25 +643,26 @@ export const bookings = {
 
   // Get booking statistics
   getStats: async (userId: string, userRole: string) => {
-    let query;
-    
     if (userRole === 'customer') {
-      query = supabase
+      const { data, error } = await supabase
         .from('bookings')
         .select('status, payment_status')
         .eq('customer_id', userId);
-    } else if (userRole === 'facility_owner') {
-      query = supabase
+      return { data, error };
+    }
+
+    if (userRole === 'facility_owner') {
+      const { data, error } = await supabase
         .from('bookings')
         .select(`
           status, payment_status,
           facilities!inner(owner_id)
         `)
         .eq('facilities.owner_id', userId);
+      return { data, error };
     }
 
-    const { data, error } = await query;
-    return { data, error }
+    throw new Error('Invalid userRole provided to bookings.getStats');
   }
 }
 

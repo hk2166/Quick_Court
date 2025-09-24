@@ -50,30 +50,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
-      const { data: { user: supabaseUser } } = await supabase.auth.getUser();
-      if (supabaseUser) {
-        // Try to get user data from our users table
-        try {
-          const { data: userData, error } = await users.getByEmail(supabaseUser.email!);
-          if (userData && !error) {
-            const mappedUser = mapSupabaseUserToUser(supabaseUser, userData);
-            setUser(mappedUser);
-          } else {
+      try {
+        const { data: { user: supabaseUser } } = await supabase.auth.getUser();
+        if (supabaseUser) {
+          // Try to get user data from our users table
+          try {
+            const { data: userData, error } = await users.getByEmail(supabaseUser.email!);
+            if (userData && !error) {
+              const mappedUser = mapSupabaseUserToUser(supabaseUser, userData);
+              setUser(mappedUser);
+            } else {
+              // Fallback to metadata
+              const mappedUser = mapSupabaseUserToUser(supabaseUser);
+              setUser(mappedUser);
+            }
+          } catch (error) {
+            console.error('Error fetching user data:', error);
             // Fallback to metadata
             const mappedUser = mapSupabaseUserToUser(supabaseUser);
             setUser(mappedUser);
           }
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-          // Fallback to metadata
-          const mappedUser = mapSupabaseUserToUser(supabaseUser);
-          setUser(mappedUser);
         }
+      } catch (e) {
+        console.warn('Auth getUser() failed, proceeding without session:', e);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     getInitialSession();
+
+    // Watchdog: if loading somehow persists, clear it after 5 seconds
+    const watchdog = setTimeout(() => {
+      setLoading((prev) => {
+        if (prev) {
+          console.warn('Auth loading watchdog triggered: forcing loading=false');
+        }
+        return false;
+      });
+    }, 5000);
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -103,7 +118,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      clearTimeout(watchdog);
+      subscription.unsubscribe();
+    };
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
