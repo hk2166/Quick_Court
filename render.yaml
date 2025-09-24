@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: quick-court
+    rootDir: .
+    env: node
+    plan: free
+    autoDeploy: true
+    region: oregon
+    buildCommand: |
+      npm ci
+      npm run build
+    startCommand: npm run start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: NODE_ENV
+        value: production
+      # Set these in the Render Dashboard (do not commit secrets)
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false

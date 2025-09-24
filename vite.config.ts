@@ -30,15 +30,9 @@ export default defineConfig({
     emptyOutDir: true,
   },
   server: {
-    allowedHosts: process.env.NODE_ENV === "production" 
-      ? true // Disable host checking in production
-      : [
-          "quick-court-5.onrender.com",
-          "quick-court-7.onrender.com",
-          ".onrender.com", // Allow all Render subdomains (suffix match may not be supported by all versions; explicit hosts included)
-          "localhost",
-          "127.0.0.1"
-        ],
+    // Allow all hosts to avoid Render host blocking when dev middleware is used.
+    // In production we serve static assets via Express (serveStatic), so this is safe.
+    allowedHosts: true,
     host: true, // Allow external connections
   },
 });
